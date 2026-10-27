@@ -1,24 +1,49 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module.js';
+import { UsersModule } from './users/users.module.js';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from './auth/guards/roles.guard.js';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Prefijo global para la API
-  app.setGlobalPrefix('api/v1');
-
-  // Configuración de tuberías de validación global
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
+@Module({
+  imports: [
+    // Global Configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
-  );
-
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  console.log(`🚀 FleetCore ejecute in: http://localhost:${port}/api/v1`);
-}
-bootstrap();
+    
+    // Database Core Connection
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST') || 'localhost',
+        port: configService.get<number>('DB_PORT') || 5432,
+        username: configService.get<string>('DB_USERNAME') || 'postgres',
+        password: configService.get<string>('DB_PASSWORD') || 'postgres',
+        database: configService.get<string>('DB_NAME') || 'fleetcore',
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
+    }),
+    
+    // Feature Modules
+    AuthModule,
+    UsersModule,
+  ],
+  controllers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
+})
+export class AppModule {}
