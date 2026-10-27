@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: fleetcore_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - fleetcore_db_data:/var/lib/postgresql/data
+    networks:
+      - fleetcore_network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fleetcore_api
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      PORT: ${PORT}
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      API_KEYS: ${API_KEYS}
+    depends_on:
+      - postgres-db
+    networks:
+      - fleetcore_network
+
+volumes:
+  fleetcore_db_data:
+
+networks:
+  fleetcore_network:
+    driver: bridge
