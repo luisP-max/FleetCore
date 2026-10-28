@@ -7,6 +7,7 @@ import { VehiclesModule } from './vehicles/vehicles.module.js';
 import { MechanicsModule } from './mechanics/mechanics.module.js';
 import { WorkshopsModule } from './workshops/workshops.module.js';
 import { MaintenancesModule } from './maintenances/maintenances.module.js';
+import { SeedModule } from './seed/seed.module.js';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MaintenancesModule } from './maintenances/maintenances.module.js';
     MechanicsModule,
     WorkshopsModule,
     MaintenancesModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],
