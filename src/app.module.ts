@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { VehiclesModule } from './vehicles/vehicles.module.js';
 import { MechanicsModule } from './mechanics/mechanics.module.js';
+import { WorkshopsModule } from './workshops/workshops.module.js';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { MechanicsModule } from './mechanics/mechanics.module.js';
     UsersModule,
     VehiclesModule,
     MechanicsModule,
+    WorkshopsModule,
   ],
   controllers: [],
   providers: [],
