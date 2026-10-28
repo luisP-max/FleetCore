@@ -1,4 +1,9 @@
 # FleetCore - Fleet Maintenance Management API
+# Prueba-NodeJS
+REST API for managing users, vehicles, workshops, and maintenance records. It is built with NestJS and TypeScript; it uses PostgreSQL with TypeORM, Redis for sessions, and JWT in HttpOnly cookies. Swagger documents the endpoints and lets you test them from the same origin without copying tokens.
+
+# NAME: Luis Angel Piña M. CLAN: nodejs + nestjs PM
+
 
 FleetCore is a high-performance RESTful backend solution built with **NestJS**, **TypeScript**, **TypeORM**, and **PostgreSQL**. This platform automates the life cycle of vehicle maintenance interventions, manages resources (mechanics and workshops), controls fleet availability, and provides robust security layers.
 
