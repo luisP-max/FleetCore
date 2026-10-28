@@ -1,49 +1,26 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthModule } from './auth/auth.module.js';
-import { UsersModule } from './users/users.module.js';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
-import { RolesGuard } from './auth/guards/roles.guard.js';
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module.js';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 
-@Module({
-  imports: [
-    // Global Configuration
-    ConfigModule.forRoot({
-      isGlobal: true,
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.setGlobalPrefix('api/v1');
+
+  // Register uniform HTTP Exception Filter globally
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
-    
-    // Database Core Connection
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST') || 'localhost',
-        port: configService.get<number>('DB_PORT') || 5432,
-        username: configService.get<string>('DB_USERNAME') || 'postgres',
-        password: configService.get<string>('DB_PASSWORD') || 'postgres',
-        database: configService.get<string>('DB_NAME') || 'fleetcore',
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
-    }),
-    
-    // Feature Modules
-    AuthModule,
-    UsersModule,
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-  ],
-})
-export class AppModule {}
+  );
+
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`🚀 FleetCore running on: http://localhost:${port}/api/v1`);
+}
+bootstrap();
