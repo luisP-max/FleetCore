@@ -8,7 +8,7 @@ FleetCore is a high-performance RESTful backend solution built with **NestJS**, 
 
 - **Clean Enterprise Architecture:** Built using modular NestJS components entirely implemented in English for global industry compliance.
 - **Robust Authentication & Authorization:** Implements local authentication using custom validation strategies and secure native session payloads via JSON Web Tokens (JWT).
-- **Role-Based Access Control (RBAC):** Synchronized global guards protecting resources according to administrative privileges (`ADMIN`, `MANAGER`, and `TECHNICIAN`).
+- **Role-Based Access Control (RBAC):** Synchronized global guards protecting resources according to administrative privileges (`ADMIN` and `TECHNICIAN`).
 - **Custom Decorators:** Direct semantic annotations using `@Public()`, `@Roles()`, and `@CurrentUser()` to safely decouple routing rules.
 - **Unified Response Interceptor:** Custom `StatusTextInterceptor` that formats all successful endpoints into a standardized structure and translates numeric codes into alphabetical representations (`201` -> `"two zero one"`).
 - **Global Exception Filter:** Enterprise-grade `HttpExceptionFilter` that intercepts system errors and guarantees clean, consistent JSON error responses, preventing data leaks or raw database errors.
