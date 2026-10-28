@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity.js';
@@ -14,7 +14,7 @@ import { MaintenanceType } from '../maintenances/enums/maintenance-type.enum.js'
 import { MaintenanceStatus } from '../maintenances/enums/maintenance-status.enum.js';
 
 @Injectable()
-export class SeedService {
+export class SeedService implements OnModuleInit {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Vehicle) private readonly vehicleRepository: Repository<Vehicle>,
@@ -27,8 +27,13 @@ export class SeedService {
     return Buffer.from(password).toString('base64');
   }
 
+  async onModuleInit() {
+    console.log(' Initializing automatic database population...');
+    const result = await this.runSeed();
+    console.log(` ${result}`);
+  }
+
   async runSeed(): Promise<string> {
-    // 1. Seed Users (1 Admin, 2 Technicians) using native Base64 encoding
     const adminEmail = 'admin@fleetcore.com';
     let adminUser = await this.userRepository.findOne({ where: { email: adminEmail } });
     if (!adminUser) {
@@ -62,7 +67,6 @@ export class SeedService {
       await this.userRepository.save(tech2);
     }
 
-    // 2. Seed Workshops (1 Active, 1 Inactive)
     let activeWorkshop = await this.workshopRepository.findOne({ where: { name: 'Main HQ Workshop' } });
     if (!activeWorkshop) {
       activeWorkshop = this.workshopRepository.create({
@@ -83,7 +87,6 @@ export class SeedService {
       await this.workshopRepository.save(inactiveWorkshop);
     }
 
-    // 3. Seed Mechanics (2 Active, 1 Inactive)
     let mech1 = await this.mechanicRepository.findOne({ where: { email: 'john.doe@fleetcore.com' } });
     if (!mech1) {
       mech1 = this.mechanicRepository.create({
@@ -117,7 +120,6 @@ export class SeedService {
       await this.mechanicRepository.save(mech3);
     }
 
-    // 4. Seed Vehicles (2 Available, 1 In Maintenance, 1 Inactive)
     let v1 = await this.vehicleRepository.findOne({ where: { plate: 'ABC123' } });
     if (!v1) {
       v1 = this.vehicleRepository.create({
@@ -170,7 +172,6 @@ export class SeedService {
       await this.vehicleRepository.save(v4);
     }
 
-    // 5. Seed Maintenances (1 Completed, 1 In Progress for v3)
     const existingMaintenances = await this.maintenanceRepository.find();
     if (existingMaintenances.length === 0) {
       const completedMaint = this.maintenanceRepository.create({
