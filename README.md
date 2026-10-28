@@ -46,7 +46,7 @@ DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=FleetCore2026!
 DB_NAME=fleetcore
-JWT_SECRET=4f78a2e1c3b9d8e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9
+JWT_SECRET=luis123456
 JWT_EXPIRES_IN=1h
 API_KEYS=demo-key-partner-1,demo-key-partner-2
 ```
@@ -100,7 +100,7 @@ All routes are prefixed with `/api/v1/`.
 | **Mechanics** | `/mechanics` | `GET` | Authenticated | Displays the technical personnel list. |
 | **Workshops** | `/workshops` | `GET` | Authenticated | Retrieves active maintenance workshops. |
 | **Maintenances** | `/maintenances` | `POST` | `ADMIN`, `MANAGER` | Registers a scheduled fleet maintenance check. |
-| **Maintenances** | `/maintenances/:id/status` | `PATCH` | `ADMIN`, `TECHNICIAN`, `MANAGER` | Triggers custom state transition sequences. |
+| **Maintenances** | `/maintenances/:id/status` | `PATCH` | `ADMIN`, `TECHNICIAN`| Triggers custom state transition sequences. |
 
 ---
 
